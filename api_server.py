@@ -38,6 +38,22 @@ class QueryRequest(BaseModel):
     budget: Optional[float] = None
     form_data: Optional[Dict[str, Any]] = None
 
+@app.post("/api/test_chat")
+async def api_test_chat(req: QueryRequest):
+    agent = conversation_agent.FundaviaAgent("debug_session_" + str(uuid.uuid4()))
+    try:
+        state = agent.process_message(req.query)
+        res = {"state": state}
+        if state.get("flags", {}).get("profile_complete"):
+            fd = agent.get_form_data(state)
+            q = agent.get_query_text(state)
+            recs = eng.recommend(q, DB_PATH, top_k=5, form_data=fd)
+            res["recommendations"] = recs
+        return res
+    except Exception as e:
+        import traceback
+        return {"error": str(e), "traceback": traceback.format_exc()}
+
 @app.post("/api/recommend")
 async def api_recommend(req: QueryRequest):
     try:
@@ -93,37 +109,36 @@ async def websocket_chat(websocket: WebSocket, session_id: str = Query(None)):
              })
 
     try:
-        while True:
+                while True:
             user_msg = await websocket.receive_text()
             try:
                 final_state = agent.process_message(user_msg)
+                reply = final_state.get("assistant_reply", "")
+                if reply:
+                    await websocket.send_json({"role": "agent", "text": reply})
+                    
+                flags = final_state.get("flags", {})
+                if flags.get("profile_complete"):
+                    await websocket.send_json({
+                        "role": "agent",
+                        "text": "Ich habe alle notwendigen Angaben. Einen Moment — ich gleiche Ihr Profil jetzt mit der Förderdatenbank ab..."
+                    })
+                    form_data = agent.get_form_data(final_state)
+                    query_text = agent.get_query_text(final_state)
+                    results = eng.recommend(query_text, DB_PATH, top_k=5, form_data=form_data)
+                    await websocket.send_json({
+                        "role": "results",
+                        "status": "success",
+                        "data": results,
+                        "results": results.get("results", [])
+                    })
             except Exception as e:
                 import traceback
                 err = traceback.format_exc()
-                print("SERVER ERROR:", err)
-                await websocket.send_json({"role": "agent", "text": f"Fehler: {err}"})
-                continue
-            reply = final_state.get("assistant_reply", "")
-            
-            if reply:
-                await websocket.send_json({"role": "agent", "text": reply})
-                
-            flags = final_state.get("flags", {})
-            if flags.get("profile_complete"):
-                await websocket.send_json({
-                    "role": "agent",
-                    "text": "Ich habe alle notwendigen Angaben. Einen Moment — ich gleiche Ihr Profil jetzt mit der Förderdatenbank ab..."
-                })
-                form_data = agent.get_form_data(final_state)
-                query_text = agent.get_query_text(final_state)
-                results = eng.recommend(query_text, DB_PATH, top_k=5, form_data=form_data)
-                
-                await websocket.send_json({
-                    "role": "results",
-                    "status": "success",
-                    "data": results,
-                    "results": results.get("results", [])
-                })
+                print("WS EXCEPTION:", err)
+                await websocket.send_json({"role": "agent", "text": f"SYSTEM FEHLER: {err}"})
+            continue
+            if False: # bypass dead code
                 
     except WebSocketDisconnect:
         print(f"Client disconnected from session {session_id}")
