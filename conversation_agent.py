@@ -113,11 +113,13 @@ def extract_node(state: GraphState):
 
 def validate_node(state: GraphState):
     extracted = state.get("extracted", {})
-    profile = state.get("profile", {})
+    profile = dict(state.get("profile", {}))
     flags = dict(state.get("flags", {}))
     pending = list(state.get("pending_confirmations", []))
     
     flags["is_off_topic"] = bool(extracted.get("is_off_topic", False))
+    flags["rd_detected"] = bool(flags.get("rd_detected", False))
+    flags["retroactive_detected"] = bool(flags.get("retroactive_detected", False))
     
     needs_conf = extracted.get("needs_confirmation", []) or []
     for field in needs_conf:
@@ -141,7 +143,7 @@ def validate_node(state: GraphState):
         
     # Completeness Check
     req = list(REQUIRED_FIELDS)
-    if flags["rd_detected"]:
+    if flags.get("rd_detected"):
         req += RD_EXTRA_FIELDS
         
     missing = [f for f in req if profile.get(f) is None]
@@ -151,15 +153,15 @@ def validate_node(state: GraphState):
 
 def reply_node(state: GraphState):
     client = Groq(api_key=GROQ_API_KEY)
-    flags = state["flags"]
+    flags = state.get("flags", {})
     
-    if flags["is_off_topic"]:
+    if flags.get("is_off_topic"):
         return {"assistant_reply": "Ich bin ein spezialisierter KI-Förderberater und kann leider nicht zu anderen Themen Auskunft geben. Könnten wir zu Ihrem Vorhaben zurückkehren?"}
         
-    if flags["retroactive_detected"] and flags["profile_complete"]:
+    if flags.get("retroactive_detected") and flags.get("profile_complete"):
         return {"assistant_reply": ""} # Will trigger engine directly
         
-    if flags["profile_complete"]:
+    if flags.get("profile_complete"):
         return {"assistant_reply": ""} # Will trigger engine directly
         
     parts = []
