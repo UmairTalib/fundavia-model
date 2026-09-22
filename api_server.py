@@ -18,7 +18,7 @@ import conversation_agent
 DB_PATH = os.path.join(BASE_DIR, 'fundavia.db')
 eng.DB_PATH = DB_PATH
 
-app = FastAPI(title="Fundavia Recommendation Engine API", version="1.3")
+app = FastAPI(title="Fundavia Recommendation Engine API", version="1.4")
 
 app.add_middleware(
     CORSMiddleware,
@@ -75,8 +75,7 @@ async def api_recommend(req: QueryRequest):
 async def websocket_chat(websocket: WebSocket, session_id: str = Query(None)):
     await websocket.accept()
     
-    if not session_id:
-        session_id = str(uuid.uuid4())
+    session_id = session_id or websocket.query_params.get("session_id") or str(uuid.uuid4())
         
     agent = conversation_agent.FundaviaAgent(session_id)
     

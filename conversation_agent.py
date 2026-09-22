@@ -147,7 +147,7 @@ def validate_node(state: GraphState):
         req += RD_EXTRA_FIELDS
         
     missing = [f for f in req if profile.get(f) is None]
-    flags["profile_complete"] = (len(missing) == 0 and len(pending) == 0)
+    flags["profile_complete"] = (len(missing) == 0)
     
     return {"profile": profile, "flags": flags, "pending_confirmations": pending, "missing_fields": missing}
 
@@ -200,18 +200,7 @@ _checkpointer = None
 def get_checkpointer():
     global _checkpointer
     if _checkpointer is None:
-        if SqliteSaver:
-            try:
-                db_path = os.path.join(DB_DIR, "chat_sessions.db")
-                conn = sqlite3.connect(db_path, check_same_thread=False)
-                saver = SqliteSaver(conn)
-                saver.setup()
-                _checkpointer = saver
-            except Exception as e:
-                print(f"SqliteSaver init failed: {e}, falling back to MemorySaver")
-                _checkpointer = MemorySaver()
-        else:
-            _checkpointer = MemorySaver()
+        _checkpointer = MemorySaver()
     return _checkpointer
 
 class FundaviaAgent:
@@ -224,16 +213,14 @@ class FundaviaAgent:
         config = {"configurable": {"thread_id": self.session_id}}
         
         curr = self.app.get_state(config)
-        state = curr.values if (curr and curr.values) else init_state()
+        state = dict(curr.values) if (curr and curr.values) else init_state()
             
-        # Update inputs
         state["user_msg"] = user_msg
         state["history"] = [{"role": "user", "content": user_msg}]
         
         out_state = self.app.invoke(state, config)
         
         reply = out_state.get("assistant_reply", "")
-        # Append assistant reply to history
         if reply:
             try:
                 self.app.update_state(config, {"history": [{"role": "assistant", "content": reply}]})
