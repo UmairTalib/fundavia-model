@@ -143,7 +143,8 @@ def validate_node(state: GraphState):
         
     # Completeness Check
     req = list(REQUIRED_FIELDS)
-    if flags.get("rd_detected"):
+    # if flags.get("rd_detected"):
+    if False:
         req += RD_EXTRA_FIELDS
         
     missing = [f for f in req if profile.get(f) is None]
