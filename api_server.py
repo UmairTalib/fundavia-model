@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from typing import Optional, Dict, Any
 import sys
 import os
 import uuid
@@ -30,11 +31,12 @@ app.add_middleware(
 
 class QueryRequest(BaseModel):
     query: str
+    form_data: Optional[Dict[str, Any]] = None
 
 @app.post("/api/recommend")
 async def api_recommend(req: QueryRequest):
     try:
-        results = eng.extract_and_recommend(req.query, DB_PATH, top_k=5)
+        results = eng.recommend(req.query, DB_PATH, top_k=5, form_data=req.form_data)
         return {"status": "success", **results}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
