@@ -43,7 +43,7 @@
         const chat = document.getElementById('chat');
         const input = document.getElementById('msg-input');
         const typing = document.getElementById('typing');
-        const ws = new WebSocket(`ws://${window.location.host}/ws/chat`);
+        const ws = new WebSocket(window.location.protocol === "https:" ? `wss://${window.location.host}` : `ws://${window.location.host}/ws/chat`);
 
         ws.onmessage = (event) => {
             typing.style.display = 'none';
