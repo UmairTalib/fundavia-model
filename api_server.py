@@ -7,6 +7,7 @@ from typing import Optional, Dict, Any
 import sys
 import os
 import uuid
+import traceback
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
@@ -17,7 +18,7 @@ import conversation_agent
 DB_PATH = os.path.join(BASE_DIR, 'fundavia.db')
 eng.DB_PATH = DB_PATH
 
-app = FastAPI(title="Fundavia Recommendation Engine API", version="1.2")
+app = FastAPI(title="Fundavia Recommendation Engine API", version="1.3")
 
 app.add_middleware(
     CORSMiddleware,
@@ -40,7 +41,7 @@ class QueryRequest(BaseModel):
 
 @app.post("/api/test_chat")
 async def api_test_chat(req: QueryRequest):
-    agent = conversation_agent.FundaviaAgent("debug_session_" + str(uuid.uuid4()))
+    agent = conversation_agent.FundaviaAgent("debug_" + str(uuid.uuid4()))
     try:
         state = agent.process_message(req.query)
         res = {"state": state}
@@ -51,7 +52,6 @@ async def api_test_chat(req: QueryRequest):
             res["recommendations"] = recs
         return res
     except Exception as e:
-        import traceback
         return {"error": str(e), "traceback": traceback.format_exc()}
 
 @app.post("/api/recommend")
@@ -94,22 +94,22 @@ async def websocket_chat(websocket: WebSocket, session_id: str = Query(None)):
             await websocket.send_json({"role": role, "text": msg["content"]})
             
         if state and state.get("flags", {}).get("profile_complete"):
-             await websocket.send_json({
-                 "role": "agent",
-                 "text": "(Fortsetzung) Ich lade Ihre passenden Programme..."
-             })
-             form_data = agent.get_form_data(state)
-             query_text = agent.get_query_text(state)
-             results = eng.recommend(query_text, DB_PATH, top_k=5, form_data=form_data)
-             await websocket.send_json({
-                 "role": "results",
-                 "status": "success",
-                 "data": results,
-                 "results": results.get("results", [])
-             })
+            await websocket.send_json({
+                "role": "agent",
+                "text": "(Fortsetzung) Ich lade Ihre passenden Programme..."
+            })
+            form_data = agent.get_form_data(state)
+            query_text = agent.get_query_text(state)
+            results = eng.recommend(query_text, DB_PATH, top_k=5, form_data=form_data)
+            await websocket.send_json({
+                "role": "results",
+                "status": "success",
+                "data": results,
+                "results": results.get("results", [])
+            })
 
     try:
-                while True:
+        while True:
             user_msg = await websocket.receive_text()
             try:
                 final_state = agent.process_message(user_msg)
@@ -133,12 +133,9 @@ async def websocket_chat(websocket: WebSocket, session_id: str = Query(None)):
                         "results": results.get("results", [])
                     })
             except Exception as e:
-                import traceback
                 err = traceback.format_exc()
                 print("WS EXCEPTION:", err)
                 await websocket.send_json({"role": "agent", "text": f"SYSTEM FEHLER: {err}"})
-            continue
-            if False: # bypass dead code
                 
     except WebSocketDisconnect:
         print(f"Client disconnected from session {session_id}")
