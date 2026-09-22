@@ -6,7 +6,11 @@ import sqlite3
 from pathlib import Path
 
 from langgraph.graph import StateGraph, START, END
-from langgraph.checkpoint.sqlite import SqliteSaver
+try:
+    from langgraph.checkpoint.sqlite import SqliteSaver
+except ImportError:
+    SqliteSaver = None
+from langgraph.checkpoint.memory import MemorySaver
 from groq import Groq
 
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
@@ -61,13 +65,18 @@ class GraphState(TypedDict):
     missing_fields: list
     user_msg: str
     assistant_reply: str
+    extracted: dict
 
 def init_state() -> dict:
     return {
+        "history": [],
         "profile": {},
         "flags": {"rd_detected": False, "retroactive_detected": False, "profile_complete": False, "is_off_topic": False},
         "pending_confirmations": [],
-        "missing_fields": REQUIRED_FIELDS.copy()
+        "missing_fields": REQUIRED_FIELDS.copy(),
+        "user_msg": "",
+        "assistant_reply": "",
+        "extracted": {}
     }
 
 # ─── NODES ────────────────────────────────────────────────────────────────────
@@ -106,7 +115,7 @@ def validate_node(state: GraphState):
     extracted = state.get("extracted", {})
     profile = state.get("profile", {})
     flags = dict(state.get("flags", {}))
-    pending = state.get("pending_confirmations", [])
+    pending = list(state.get("pending_confirmations", []))
     
     flags["is_off_topic"] = bool(extracted.get("is_off_topic", False))
     
@@ -184,20 +193,36 @@ workflow.add_edge("extract", "validate")
 workflow.add_edge("validate", "reply")
 workflow.add_edge("reply", END)
 
+_checkpointer = None
+
+def get_checkpointer():
+    global _checkpointer
+    if _checkpointer is None:
+        if SqliteSaver:
+            try:
+                db_path = os.path.join(DB_DIR, "chat_sessions.db")
+                conn = sqlite3.connect(db_path, check_same_thread=False)
+                saver = SqliteSaver(conn)
+                saver.setup()
+                _checkpointer = saver
+            except Exception as e:
+                print(f"SqliteSaver init failed: {e}, falling back to MemorySaver")
+                _checkpointer = MemorySaver()
+        else:
+            _checkpointer = MemorySaver()
+    return _checkpointer
+
 class FundaviaAgent:
     def __init__(self, session_id: str):
         self.session_id = session_id
-        db_path = os.path.join(DB_DIR, "chat_sessions.db")
-        self.conn = sqlite3.connect(db_path, check_same_thread=False)
-        self.saver = SqliteSaver(self.conn)
+        self.saver = get_checkpointer()
         self.app = workflow.compile(checkpointer=self.saver)
         
     def process_message(self, user_msg: str):
         config = {"configurable": {"thread_id": self.session_id}}
         
-        state = self.app.get_state(config).values
-        if not state:
-            state = init_state()
+        curr = self.app.get_state(config)
+        state = curr.values if (curr and curr.values) else init_state()
             
         # Update inputs
         state["user_msg"] = user_msg
@@ -208,7 +233,10 @@ class FundaviaAgent:
         reply = out_state.get("assistant_reply", "")
         # Append assistant reply to history
         if reply:
-            self.app.update_state(config, {"history": [{"role": "assistant", "content": reply}]})
+            try:
+                self.app.update_state(config, {"history": [{"role": "assistant", "content": reply}]})
+            except Exception:
+                pass
             
         return out_state
         
