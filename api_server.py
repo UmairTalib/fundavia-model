@@ -95,8 +95,14 @@ async def websocket_chat(websocket: WebSocket, session_id: str = Query(None)):
     try:
         while True:
             user_msg = await websocket.receive_text()
-            
-            final_state = agent.process_message(user_msg)
+            try:
+                final_state = agent.process_message(user_msg)
+            except Exception as e:
+                import traceback
+                err = traceback.format_exc()
+                print("SERVER ERROR:", err)
+                await websocket.send_json({"role": "agent", "text": f"Fehler: {err}"})
+                continue
             reply = final_state.get("assistant_reply", "")
             
             if reply:
