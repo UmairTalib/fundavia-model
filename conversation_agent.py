@@ -15,7 +15,7 @@ from groq import Groq
 
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
-MODEL = "llama-3.3-70b-versatile"
+MODEL = "openai/gpt-oss-120b"
 DB_DIR = os.path.dirname(os.path.abspath(__file__))
 
 REQUIRED_FIELDS = ["state", "employees", "project_status", "company_age"]
