@@ -43,6 +43,8 @@
         const chat = document.getElementById('chat');
         const input = document.getElementById('msg-input');
         const typing = document.getElementById('typing');
+        let sessionId = localStorage.getItem("fundavia_session");
+        if (!sessionId) { sessionId = Math.random().toString(36).substring(2) + Date.now().toString(36); localStorage.setItem("fundavia_session", sessionId); }
         const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         const ws = new WebSocket(`${protocol}//${window.location.host}/ws/chat`);
 

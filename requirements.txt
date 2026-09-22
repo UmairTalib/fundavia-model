@@ -4,4 +4,7 @@ groq
 websockets
 pydantic
 pandas
-pandas
+langgraph
+langchain-core
+langchain-groq
+langgraph-checkpoint-sqlite
