@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundavia — Ihr KI-Förderberater</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b1326;
+            --bg-surface: #131b2e;
+            --bg-glass: rgba(255, 255, 255, 0.04);
+            --bg-glass-hover: rgba(255, 255, 255, 0.08);
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --text-main: #dae2fd;
+            --text-muted: #8c909f;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 15% 15%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 85% 85%, rgba(6, 182, 212, 0.12) 0px, transparent 50%);
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAVBAR */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 5%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #dae2fd 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tagline::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success-green);
+            box-shadow: 0 0 8px var(--success-green);
+        }
+
+        /* MAIN CONTAINER */
+        main {
+            flex: 1;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 0.5rem 0 2rem;
+        }
+
+        h1 {
+            font-size: 2.7rem;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+        }
+
+        .hero p.subtext {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 720px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        /* HYBRID INPUT BOX (GLASS PANEL) */
+        .search-panel {
+            max-width: 880px;
+            margin: 0 auto;
+            background: rgba(19, 27, 46, 0.65);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+            text-align: left;
+        }
+
+        .grid-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1.4fr;
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .grid-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .field-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        input[type="number"], input[type="text"], select, textarea {
+            width: 100%;
+            background: rgba(11, 19, 38, 0.7);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            font-size: 0.92rem;
+            color: var(--text-main);
+            font-family: inherit;
+            transition: all 0.25s ease;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238c909f%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 14px;
+            padding-right: 2.5rem;
+        }
+
+        select option {
+            background-color: var(--bg-primary);
+            color: white;
+        }
+
+        select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: rgba(11, 19, 38, 0.3);
+        }
+
+        textarea {
+            height: 110px;
+            line-height: 1.5;
+            resize: none;
+        }
+
+        input:focus, select:focus:not(:disabled), textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background: rgba(11, 19, 38, 0.95);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #555a6e;
+        }
+
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #60a5fa 0%, var(--accent-blue) 100%);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0) scale(0.99);
+        }
+
+        /* BADGES */
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #a1a6b8;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem 1.1rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* COMPACT TOP BAR FOR RESULTS */
+        .compact-bar {
+            display: none;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .compact-query {
+            font-size: 0.92rem;
+            color: #ffffff;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 800px;
+        }
+
+        .btn-edit {
+            background: transparent;
+            border: 1px solid var(--border-glass);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-edit:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-blue);
+            color: white;
+        }
+
+        /* LOADING & FOLLOW UP */
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .follow-up-card {
+            display: none;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem auto 0;
+            max-width: 600px;
+            text-align: left;
+        }
+
+        .follow-up-title {
+            color: var(--warning-orange);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .follow-up-card input {
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        /* RESULTS SECTION */
+        .results-container {
+            display: none;
+        }
+
+        .profile-pills {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .pill {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .pill-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-right: 0.4rem;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 0.75rem;
+        }
+
+        .results-count {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .result-card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 18px;
+            padding: 1.75rem;
+            margin-bottom: 1.25rem;
+            backdrop-filter: blur(14px);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            opacity: 0;
+            animation: fadeSlideIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card:hover {
+            background: var(--bg-glass-hover);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.35rem;
+            line-height: 1.3;
+        }
+
+        .card-provider {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .card-ring-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 90px;
+        }
+
+        .ring-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .chip {
+            font-family: 'Geist', monospace;
+            font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.35rem 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        .chip-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+            border-color: rgba(16, 185, 129, 0.3);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .chip-grw {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-cyan);
+            border-color: rgba(6, 182, 212, 0.3);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 1.25rem;
+            gap: 1.5rem;
+        }
+
+        .card-explanation {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            font-style: italic;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            transition: all 0.2s;
+        }
+
+        .btn-link:hover {
+            background: rgba(59, 130, 246, 0.25);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.1rem; }
+            .grid-row-3, .grid-row-2 { grid-template-columns: 1fr; gap: 1rem; }
+            .card-top { flex-direction: column; gap: 1rem; }
+            .card-ring-wrapper { align-self: flex-end; margin-top: -3.5rem; }
+            .card-bottom { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .btn-link { align-self: flex-end; }
+            .search-panel { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-btn" style="position: absolute; left: 20px; top: 20px; color: #94a3b8; text-decoration: none; font-size: 14px; font-weight: bold; background: rgba(255,255,255,0.05); padding: 8px 15px; border-radius: 8px; transition: 0.2s;">&larr; Zurück</a>
+
+<header>
+    <div class="logo">Fundavia</div>
+    <div class="tagline">Ihr KI-Förderberater</div>
+</header>
+
+<main>
+    <!-- HERO / SEARCH SECTION -->
+    <section class="hero" id="hero-section">
+        <h1>Welche Förderung passt<br>zu Ihrem Unternehmen?</h1>
+        <p class="subtext">Wählen Sie Ihre Kerndaten und beschreiben Sie Ihr Vorhaben. Unsere hybride KI-Engine glieder Ihre Projektparameter exakt an die gesetzlichen Förderrichtlinien an.</p>
+        
+        <!-- HYBRID FORM + TEXT PANEL -->
+        <div class="search-panel">
+            <div class="grid-row-3">
+                <div class="field-group">
+                    <label class="field-label">👥 Unternehmensgröße</label>
+                    <select id="form-employees">
+                        <option value="">Bitte wählen...</option>
+                        <option value="Kleinstunternehmen">Kleinstunternehmen (< 10 MA)</option>
+                        <option value="Kleine KMU">Kleine KMU (10 - 49 MA)</option>
+                        <option value="Mittlere KMU">Mittlere KMU (50 - 249 MA)</option>
+                        <option value="Großunternehmen (Nicht-KMU)">Großunternehmen (250+ MA)</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label class="field-label">📍 Bundesland</label>
+                    <select id="form-state" onchange="onStateChanged()">
+                        <option value="">Bitte wählen...</option>
+                        <option value="Baden-Württemberg">Baden-Württemberg</option>
+                        <option value="Bayern">Bayern</option>
+                        <option value="Berlin">Berlin</option>
+                        <option value="Brandenburg">Brandenburg</option>
+                        <option value="Bremen">Bremen</option>
+                        <option value="Hamburg">Hamburg</option>
+                        <option value="Hessen">Hessen</option>
+                        <option value="Mecklenburg-Vorpommern">Mecklenburg-Vorpommern</option>
+                        <option value="Niedersachsen">Niedersachsen</option>
+                        <option value="Nordrhein-Westfalen">Nordrhein-Westfalen</option>
+                        <option value="Rheinland-Pfalz">Rheinland-Pfalz</option>
+                        <option value="Saarland">Saarland</option>
+                        <option value="Sachsen">Sachsen</option>
+                        <option value="Sachsen-Anhalt">Sachsen-Anhalt</option>
+                        <option value="Schleswig-Holstein">Schleswig-Holstein</option>
+                        <option value="Thüringen">Thüringen</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label class="field-label">🏙️ Landkreis / Stadt (GRW-Bonus)</label>
+                    <select id="form-district" disabled>
+                        <option value="">← Bitte zuerst Bundesland wählen...</option>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">⏳ Projektstatus (Rückwirkend?)</label>
+                    <select id="form-status">
+                        <option value="">Bitte wählen...</option>
+                        <option value="not_started">Noch nicht gestartet (Geplant)</option>
+                        <option value="already_started">Bereits gestartet (Rückwirkend)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid-row-2">
+                <div class="field-group">
+                    <label class="field-label">📅 Unternehmensalter (Gründungsjahr)</label>
+                    <select id="form-company-age">
+                        <option value="">Bitte wählen...</option>
+                        <option value="< 5 Jahre (Gründung / Startup)">&lt; 5 Jahre (Gründung / Junges Startup)</option>
+                        <option value="5 - 10 Jahre (Wachstumsphase)">5 - 10 Jahre (Wachstumsphase)</option>
+                        <option value="> 10 Jahre (Bestandsunternehmen)">&gt; 10 Jahre (Etabliertes Bestandsunternehmen)</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label class="field-label">🎯 Vorhabenstyp / Innovationsgrad (K.-o.-Prüfung)</label>
+                    <select id="form-project-type">
+                        <option value="">Bitte Vorhaben klassifizieren...</option>
+                        <option value="Standard-Digitalisierung & Anschaffung (Software, IT)">Standard-Digitalisierung & Anschaffung (z.B. Software, IT-Infrastruktur)</option>
+                        <option value="Forschung & Entwicklung (FuE / Technisches Risiko & Neuheitscharakter)">Forschung & Entwicklung (FuE / Technisches Risiko & Neuheitscharakter)</option>
+                        <option value="Unternehmensberatung & Strategische Analyse">Unternehmensberatung & Strategische Managementberatung</option>
+                        <option value="Qualifizierung & Weiterbildung der Mitarbeiter">Qualifizierung & Weiterbildung der Mitarbeiter</option>
+                        <option value="Energieeffizienz, Klima & Umwelttechnik">Energieeffizienz, Klima & Umwelttechnik</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">💡 Projektbeschreibung & Zielstellung</label>
+                <textarea id="query-input" placeholder="Was genau planen Sie? Beispiel: Wir möchten unsere Produktionsplanung und Kassen mit einer neuen Software digitalisieren, um Arbeitsabläufe effizienter zu steuern und Daten in Echtzeit auszuwerten..."></textarea>
+            </div>
+
+            <button class="btn-primary" onclick="executeSearch()">
+                <span>Passende Förderungen analysieren & verifizieren</span>
+                <span>→</span>
+            </button>
+        </div>
+
+        <div class="badges">
+            <div class="badge-item">⚡ 42 geprüfte Flaggschiff-Programme (Inkl. Bundesweit & EU)</div>
+            <div class="badge-item">🔒 100% Rechtssicher & Determinismus-Garantie</div>
+            <div class="badge-item">🎯 Automatisierter GRW-Regional-Check</div>
+        </div>
+    </section>
+
+    <!-- COMPACT TOP BAR FOR RESULTS -->
+    <div class="compact-bar" id="compact-bar">
+        <div class="compact-query" id="compact-query-text"></div>
+        <button class="btn-edit" onclick="resetSearch()">✎ Eingabe anpassen</button>
+    </div>
+
+    <!-- LOADING STATE -->
+    <div class="loader" id="loader">
+        <div class="spinner"></div>
+        <p style="color: var(--text-muted); font-size: 1.1rem;" id="loading-text">Analyse läuft... KI wertet Vorhaben aus & filtert wissenschaftliche K.-o.-Kriterien...</p>
+    </div>
+
+    <!-- FOLLOW-UP QUESTION CARD -->
+    <div class="follow-up-card" id="follow-up-card">
+        <div class="follow-up-title">
+            <span>❓</span>
+            <span>Rückfrage zu Ihrem Profil</span>
+        </div>
+        <p id="follow-up-text" style="margin-top: 0.5rem; color: #e2e8f0;">Wir benötigen noch eine kurze Angabe, um die Förderfähigkeit exakt und rechtssicher zu prüfen:</p>
+        <p id="question-label" style="font-weight: 600; font-size: 1.1rem; margin-top: 1rem; color: white;"></p>
+        <input type="text" id="follow-up-input" placeholder="Ihre Antwort (z.B. '15 Mitarbeiter' oder 'Bayern')..." onkeydown="if(event.key==='Enter') submitFollowUp()">
+        <button class="btn-primary" style="margin-top: 0.5rem; padding: 0.75rem 1.5rem; font-size: 1rem; width: auto;" onclick="submitFollowUp()">Weiter →</button>
+    </div>
+
+    <!-- RESULTS SECTION -->
+    <section class="results-container" id="results-section">
+        <div class="profile-pills" id="profile-pills">
+            <span class="pill-label">Geprüftes Profil:</span>
+        </div>
+
+        <div class="results-header">
+            <div class="results-count" id="results-count">0 Programme gefunden</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Sortiert nach Förderquote (absteigend) & Thematischer Relevanz</div>
+        </div>
+
+        <div id="cards-wrapper"></div>
+    </section>
+</main>
+
+<script>
+    const STATE_DISTRICTS = {
+        "Baden-Württemberg": ["Stuttgart", "Karlsruhe", "Mannheim", "Freiburg im Breisgau", "Heidelberg", "Ulm", "Heilbronn", "Pforzheim", "Reutlingen", "Esslingen", "Tübingen", "Ludwigsburg", "Konstanz", "Aalen", "Sindelfingen", "Sonstiger Landkreis in BW"],
+        "Bayern": ["München", "Nürnberg", "Augsburg", "Regensburg", "Ingolstadt", "Würzburg", "Fürth", "Erlangen", "Bamberg", "Bayreuth", "Landshut", "Aschaffenburg", "Kempten (Allgäu)", "Rosenheim", "Schweinfurt", "Hof", "Sonstiger Landkreis in Bayern"],
+        "Berlin": ["Berlin - Mitte", "Berlin - Charlottenburg-Wilmersdorf", "Berlin - Friedrichshain-Kreuzberg", "Berlin - Pankow", "Berlin - Neukölln", "Berlin - Steglitz-Zehlendorf", "Berlin - Tempelhof-Schöneberg", "Berlin - Treptow-Köpenick", "Berlin - Marzahn-Hellersdorf", "Berlin - Lichtenberg", "Berlin - Reinickendorf", "Berlin - Spandau"],
+        "Brandenburg": ["Potsdam", "Cottbus", "Brandenburg an der Havel", "Frankfurt (Oder)", "Oranienburg", "Falkensee", "Bernau bei Berlin", "Eberswalde", "Königs Wusterhausen", "Neuruppin", "Brandenburg (alle Landkreise - GRW-Fördergebiet)"],
+        "Bremen": ["Bremen (Stadt)", "Bremerhaven"],
+        "Hamburg": ["Hamburg-Mitte", "Hamburg-Altona", "Hamburg-Eimsbüttel", "Hamburg-Nord", "Hamburg-Wandsbek", "Hamburg-Bergedorf", "Hamburg-Harburg"],
+        "Hessen": ["Frankfurt am Main", "Wiesbaden", "Kassel", "Darmstadt", "Offenbach am Main", "Hanau", "Gießen", "Marburg", "Fulda", "Rüsselsheim am Main", "Bad Homburg vor der Höhe", "Wetzlar", "Sonstiger Landkreis in Hessen"],
+        "Mecklenburg-Vorpommern": ["Rostock", "Schwerin", "Neubrandenburg", "Stralsund", "Greifswald", "Wismar", "Güstrow", "Mecklenburg-Vorpommern (alle Landkreise - GRW-Fördergebiet)"],
+        "Niedersachsen": ["Hannover", "Braunschweig", "Oldenburg", "Osnabrück", "Wolfsburg", "Göttingen", "Salzgitter", "Hildesheim", "Delmenhorst", "Wilhelmshaven", "Lüneburg", "Celle", "Garbsen", "Hameln", "Sonstiger Landkreis in Niedersachsen"],
+        "Nordrhein-Westfalen": ["Köln", "Düsseldorf", "Dortmund", "Essen", "Duisburg", "Bochum", "Wuppertal", "Bielefeld", "Bonn", "Münster", "Mönchengladbach", "Gelsenkirchen", "Aachen", "Krefeld", "Oberhausen", "Hagen", "Hamm", "Mülheim an der Ruhr", "Leverkusen", "Siegen", "Sonstiger Landkreis in NRW"],
+        "Rheinland-Pfalz": ["Mainz", "Ludwigshafen am Rhein", "Koblenz", "Trier", "Kaiserslautern", "Worms", "Neuwied", "Neustadt an der Weinstraße", "Speyer", "Frankenthal", "Sonstiger Landkreis in Rheinland-Pfalz"],
+        "Saarland": ["Saarbrücken", "Neunkirchen", "Homburg", "Völklingen", "Sankg Ingbert", "Saarlouis", "Sonstiger Landkreis im Saarland"],
+        "Sachsen": ["Dresden", "Leipzig", "Chemnitz", "Zwickau", "Plauen", "Görlitz", "Freiberg", "Bautzen", "Pirna", "Sachsen (alle Landkreise - GRW-Fördergebiet)"],
+        "Sachsen-Anhalt": ["Halle (Saale)", "Magdeburg", "Dessau-Roßlau", "Lutherstadt Wittenberg", "Halberstadt", "Stendal", "Bitterfeld-Wolfen", "Sachsen-Anhalt (alle Landkreise - GRW-Fördergebiet)"],
+        "Schleswig-Holstein": ["Kiel (kreisfreie Stadt)", "Lübeck (kreisfreie Stadt)", "Flensburg", "Neumünster", "Norderstedt", "Elmshorn", "Pinneberg", "Segeberg", "Stormarn", "Herzogtum Lauenburg", "Nordfriesland (GRW)", "Ostholstein (GRW)", "Plön (GRW)", "Rendsburg-Eckernförde (GRW)", "Schleswig-Flensburg (GRW)", "Steinburg (GRW)"],
+        "Thüringen": ["Erfurt", "Jena", "Gera", "Weimar", "Gotha", "Eisenach", "Nordhausen", "Suhl", "Thüringen (alle Landkreise - GRW-Fördergebiet)"]
+    };
+
+    function onStateChanged() {
+        const stateSel = document.getElementById('form-state');
+        const distSel = document.getElementById('form-district');
+        const selectedState = stateSel.value;
+
+        distSel.innerHTML = "";
+
+        if (!selectedState) {
+            distSel.disabled = true;
+            distSel.innerHTML = `<option value="">← Bitte zuerst Bundesland wählen...</option>`;
+            return;
+        }
+
+        distSel.disabled = false;
+        distSel.innerHTML = `<option value="">Bitte Stadt / Landkreis in ${selectedState} wählen...</option>`;
+        
+        const cities = STATE_DISTRICTS[selectedState] || ["Sonstiger Ort"];
+        cities.forEach(city => {
+            const opt = document.createElement("option");
+            const cleanVal = city.split(" (")[0];
+            opt.value = cleanVal;
+            opt.textContent = city;
+            distSel.appendChild(opt);
+        });
+    }
+
+    let currentQuery = "";
+    let lastProfile = {};
+    let lastEmployees = null;
+    let lastState = null;
+    let lastDistrict = null;
+    let lastCompanyAge = null;
+    let lastProjectType = null;
+
+    async function executeSearch(customQuery = null) {
+        const queryEl = document.getElementById('query-input');
+        const empEl = document.getElementById('form-employees');
+        const stateEl = document.getElementById('form-state');
+        const distEl = document.getElementById('form-district');
+        const ageEl = document.getElementById('form-company-age');
+        const typeEl = document.getElementById('form-project-type');
+
+        currentQuery = customQuery || queryEl.value.trim();
+        lastEmployees = empEl.value ? empEl.value : null;
+        lastState = stateEl.value || null;
+        lastDistrict = distEl.value || null;
+        lastCompanyAge = ageEl.value || null;
+        lastProjectType = typeEl.value || null;
+        const statusEl = document.getElementById('form-status');
+        const projectStatus = statusEl ? statusEl.value : null;
+        const budgetEl = document.getElementById('form-budget');
+        const lastBudget = budgetEl && budgetEl.value ? parseFloat(budgetEl.value) : null;
+
+        if (!currentQuery || currentQuery.length < 3) {
+            alert("Bitte beschreiben Sie Ihr Vorhaben im Textfeld, damit unsere KI die passende Förderthematik abgleichen kann.");
+            return;
+        }
+
+        // Switch to loading UI
+        document.getElementById('hero-section').style.display = 'none';
+        document.getElementById('compact-bar').style.display = 'flex';
+        
+        let compactText = "";
+        if (lastEmployees) compactText += `👥 ${lastEmployees} MA  |  `;
+        if (lastState) compactText += `📍 ${lastState}  |  `;
+        if (lastProjectType) compactText += `🎯 ${lastProjectType.split(' (')[0]}  |  `;
+        compactText += `„${currentQuery}“`;
+        
+        document.getElementById('compact-query-text').textContent = compactText;
+        document.getElementById('results-section').style.display = 'none';
+        document.getElementById('follow-up-card').style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
+
+        const payload = {
+            query: currentQuery,
+            employees: lastEmployees,
+            state: lastState,
+            district: lastDistrict,
+            company_age: lastCompanyAge,
+            project_type: lastProjectType,
+            budget: lastBudget
+        };
+
+        try {
+            const response = await fetch('/api/recommend', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error("Netzwerkfehler: Server antwortete mit Status " + response.status);
+            }
+
+            const data = await response.json();
+            document.getElementById('loader').style.display = 'none';
+
+            if (data.status === 'needs_info') {
+                showFollowUp(data);
+            } else {
+                renderResults(data);
+            }
+        } catch (error) {
+            document.getElementById('loader').style.display = 'none';
+            alert("Fehler bei der Abfrage: " + error.message);
+            resetSearch();
+        }
+    }
+
+    function showFollowUp(data) {
+        lastProfile = data.profile || {};
+        const qLabel = document.getElementById('question-label');
+        qLabel.textContent = data.questions ? data.questions.join(" / ") : "Bitte ergänzen Sie Ihre Angaben (Mitarbeiterzahl & Bundesland).";
+        const card = document.getElementById('follow-up-card');
+        card.style.display = 'block';
+        const input = document.getElementById('follow-up-input');
+        input.value = "";
+        setTimeout(() => input.focus(), 100);
+    }
+
+    function submitFollowUp() {
+        const ans = document.getElementById('follow-up-input').value.trim();
+        if (!ans) return;
+        
+        if (/^\d+$/.test(ans) && lastProfile.missing_fields && lastProfile.missing_fields.includes("employees")) {
+            document.getElementById('form-employees').value = ans;
+            executeSearch();
+            return;
+        }
+        
+        const combined = currentQuery + ". Nachtrag: " + ans;
+        executeSearch(combined);
+    }
+
+    function resetSearch() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('results-section').style.display = 'none';
+        document.getElementById('follow-up-card').style.display = 'none';
+        document.getElementById('compact-bar').style.display = 'none';
+        const hero = document.getElementById('hero-section');
+        hero.style.display = 'block';
+        setTimeout(() => document.getElementById('query-input').focus(), 100);
+    }
+
+    function generateRing(pct, bonus) {
+        if (!pct || pct === 0) {
+            return `<div style="width: 76px; height: 76px; border-radius: 50%; border: 2px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; color: #94a3b8;">VARIABEL</div>`;
+        }
+        const r = 32;
+        const c = 2 * Math.PI * r;
+        const dash = (pct / 100) * c;
+        
+        let label = `${Math.round(pct)}%`;
+        let bonusText = bonus ? `<text x="38" y="52" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700" font-family="Inter">+${bonus}% Bonus</text>` : "";
+        let yPos = bonus ? "39" : "44";
+
+        return `
+        <svg width="76" height="76" viewBox="0 0 76 76">
+            <circle cx="38" cy="38" r="${r}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="7"/>
+            <circle cx="38" cy="38" r="${r}" fill="none" 
+                stroke="url(#blueGrad)" stroke-width="7"
+                stroke-dasharray="${dash} ${c - dash}" stroke-linecap="round"
+                transform="rotate(-90 38 38)"/>
+            <defs>
+                <linearGradient id="blueGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#3b82f6"/>
+                    <stop offset="100%" stop-color="#06b6d4"/>
+                </linearGradient>
+            </defs>
+            <text x="38" y="${yPos}" text-anchor="middle" fill="white" font-size="15" font-weight="700" font-family="Inter">${label}</text>
+            ${bonusText}
+        </svg>`;
+    }
+
+    function renderResults(data) {
+        const pillsWrapper = document.getElementById('profile-pills');
+        pillsWrapper.innerHTML = '<span class="pill-label">Geprüftes Profil:</span>';
+        const p = data.profile || {};
+
+        if (p.employees !== null && p.employees !== undefined) {
+            pillsWrapper.innerHTML += `<span class="pill">👥 ${p.employees}</span>`;
+        }
+        if (p.state) pillsWrapper.innerHTML += `<span class="pill">📍 ${p.state}</span>`;
+        if (p.district) pillsWrapper.innerHTML += `<span class="pill">🏙️ ${p.district}</span>`;
+        if (p.company_age) pillsWrapper.innerHTML += `<span class="pill">📅 Alter: ${p.company_age.split(' (')[0]}</span>`;
+        if (p.project_type) pillsWrapper.innerHTML += `<span class="pill" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">🎯 ${p.project_type.split(' (')[0]}</span>`;
+        
+        if (p.topics && p.topics.length > 0) {
+            p.topics.forEach(t => {
+                pillsWrapper.innerHTML += `<span class="pill" style="background: rgba(6, 182, 212, 0.15); color: #22d3ee; border-color: rgba(6, 182, 212, 0.3);">💡 ${t}</span>`;
+            });
+        }
+
+        const results = data.results || [];
+        document.getElementById('results-count').textContent = `${results.length} verifizierte Förderprogramme gefunden`;
+        document.getElementById('results-section').style.display = 'block';
+
+        const wrapper = document.getElementById('cards-wrapper');
+        wrapper.innerHTML = "";
+
+        if (results.length === 0) {
+            wrapper.innerHTML = `<div style="text-align: center; padding: 4rem; color: var(--text-muted); background: var(--bg-glass); border-radius: 18px; border: 1px solid var(--border-glass);">
+                <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">Leider konnten wir keine direkt passenden Programme für diese exakte Kombination finden.</p>
+                <button class="btn-primary" style="width: auto; margin: 0 auto; padding: 0.85rem 2rem;" onclick="resetSearch()">Eingabe anpassen</button>
+            </div>`;
+            return;
+        }
+
+        results.forEach((r, idx) => {
+            const delay = idx * 0.08;
+            const ringSvg = generateRing(r.funding_pct, r.bonus_pp);
+            
+            let chipsHtml = `<span class="chip chip-active">● Aktiv</span>`;
+            if (r.max_amount_eur) {
+                 chipsHtml += `<span class="chip">💶 Max. ${new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(r.max_amount_eur)}</span>`;
+            }
+            if (r.instrument) {
+                chipsHtml += `<span class="chip">🛠️ ${r.instrument}</span>`;
+            }
+            if (r.grw_bonus_applied) {
+                chipsHtml += `<span class="chip chip-grw">🎯 GRW Regional-Bonus verifiziert</span>`;
+            }
+            if (r.next_deadline) {
+                let dText = r.next_deadline.split(" ")[0];
+                chipsHtml += `<span class="chip" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-orange); border-color: rgba(245, 158, 11, 0.3);">⏰ Stichtag: ${dText}</span>`;
+            }
+
+            const explanation = r.explanation || r.description || "Dieses Programm wurde mathematisch und thematisch auf Übereinstimmung mit Ihrem Projektprofil verifiziert.";
+
+            const cardHtml = `
+            <div class="result-card" style="animation-delay: ${delay}s">
+                <div class="card-top">
+                    <div class="card-info">
+                        <div class="card-title">${r.name}</div>
+                        <div class="card-provider">${r.provider || 'Bundesförderung / EU'}</div>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    ${chipsHtml}
+                </div>
+                <div class="card-bottom">
+                    <div class="card-explanation">"${explanation}"</div>
+                    <a href="${r.source_url || '#'}" target="_blank" rel="noopener" class="btn-link" style="position: relative; z-index: 999; cursor: pointer;">
+                        <span>Zum Programm</span>
+                        <span>↗</span>
+                    </a>
+                </div>
+            </div>`;
+
+            wrapper.innerHTML += cardHtml;
+        });
+    }
+
+    async function generateDraft(programName, btnElement) {
+        const originalText = btnElement.innerHTML;
+        btnElement.innerHTML = "<span>⏳ Generiere...</span>";
+        btnElement.disabled = true;
+        try {
+            const response = await fetch('/api/draft', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    query: currentQuery,
+                    program_name: programName,
+                    employees: lastEmployees,
+                    state: lastState
+                })
+            });
+            const data = await response.json();
+            
+            // Create a blob and download it
+            const blob = new Blob([data.draft], { type: 'text/markdown' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Projektskizze_${programName.substring(0,20).replace(/[^a-z0-9]/gi, '_')}.md`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            btnElement.innerHTML = "<span>✅ Heruntergeladen</span>";
+        } catch (e) {
+            alert("Fehler: " + e.message);
+            btnElement.innerHTML = originalText;
+        }
+        setTimeout(() => { btnElement.disabled = false; btnElement.innerHTML = originalText; }, 3000);
+    }
+</script>
+
+
+
+    <!-- FLOATING CHAT WIDGET -->
+    <div id="chat-widget" style="display: none; position: fixed; bottom: 80px; right: 30px; width: 420px; height: 650px; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); z-index: 1000; overflow: hidden; border: 1px solid rgba(59, 130, 246, 0.5); background: #0b1326; transition: all 0.3s ease;">
+        <!-- Header with close button -->
+        <div style="background: #1e3a8a; color: white; padding: 12px 20px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+            <span>🤖 KI-Förderberater</span>
+            <button onclick="toggleChat()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 0;">&times;</button>
+        </div>
+        <!-- Iframe loading the chat engine -->
+        <iframe src="/chat" style="width: 100%; height: calc(100% - 45px); border: none;"></iframe>
+    </div>
+
+    <!-- FLOATING ACTION BUTTON -->
+    <button onclick="toggleChat()" id="chat-fab" style="position: fixed; bottom: 25px; right: 30px; background: linear-gradient(135deg, #3b82f6, #06b6d4); color: white; border: none; border-radius: 50px; padding: 15px 25px; font-weight: bold; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.4); z-index: 1001; font-size: 16px; transition: transform 0.2s;">
+        💬 Mit KI beraten lassen
+    </button>
+
+    <script>
+        function toggleChat() {
+            const widget = document.getElementById('chat-widget');
+            const fab = document.getElementById('chat-fab');
+            if (widget.style.display === 'none') {
+                widget.style.display = 'block';
+                fab.style.transform = 'scale(0.9)';
+            } else {
+                widget.style.display = 'none';
+                fab.style.transform = 'scale(1)';
+            }
+        }
+    </script>
+</body>
+
+</html>

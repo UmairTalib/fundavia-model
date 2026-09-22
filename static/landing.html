@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Fundavia - Willkommen</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0b1326; color: #dae2fd; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        
+        /* Background Glow Effects */
+        .glow-1 { position: absolute; top: -10%; left: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%); z-index: -1; }
+        .glow-2 { position: absolute; bottom: -10%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(0,0,0,0) 70%); z-index: -1; }
+        
+        .hero { text-align: center; margin-bottom: 60px; z-index: 1; }
+        .hero h1 { font-size: 48px; color: #ffffff; margin-bottom: 15px; letter-spacing: -1px; }
+        .hero h1 span { color: transparent; background-clip: text; -webkit-background-clip: text; background-image: linear-gradient(90deg, #3b82f6, #06b6d4); }
+        .hero p { font-size: 18px; color: #94a3b8; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+        
+        .card-container { display: flex; gap: 40px; max-width: 1000px; width: 100%; padding: 0 20px; box-sizing: border-box; z-index: 1; justify-content: center; }
+        
+        .card { flex: 1; max-width: 420px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 50px 40px; text-align: center; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-decoration: none; display: block; color: inherit; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        
+        .card:hover { transform: translateY(-15px); background: rgba(59, 130, 246, 0.05); border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 25px 50px rgba(0,0,0,0.4); }
+        .card.form-card:hover { background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.4); }
+        
+        .icon-wrap { width: 90px; height: 90px; margin: 0 auto 25px auto; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 42px; transition: 0.3s; }
+        .card:hover .icon-wrap { transform: scale(1.1); }
+        .icon-ai { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); }
+        .icon-form { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); }
+        
+        .card h2 { font-size: 26px; color: #fff; margin-bottom: 15px; }
+        .card p { font-size: 15px; color: #94a3b8; line-height: 1.7; margin-bottom: 35px; height: 75px; }
+        
+        .btn { display: inline-block; padding: 14px 35px; border-radius: 30px; font-weight: bold; font-size: 15px; text-decoration: none; transition: 0.3s; }
+        .btn-ai { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; box-shadow: 0 4px 15px rgba(59,130,246,0.4); }
+        .card:hover .btn-ai { box-shadow: 0 8px 25px rgba(59,130,246,0.6); }
+        
+        .btn-form { background: transparent; border: 2px solid #10b981; color: #10b981; }
+        .form-card:hover .btn-form { background: #10b981; color: white; box-shadow: 0 8px 25px rgba(16,185,129,0.4); }
+
+        .back-btn:hover { background: rgba(255,255,255,0.1) !important; color: white !important; }
+    </style>
+</head>
+<body>
+    <div class="glow-1"></div>
+    <div class="glow-2"></div>
+    
+    <div class="hero">
+        <h1>Willkommen bei <span>Fundavia</span></h1>
+        <p>Wählen Sie Ihren bevorzugten Weg, um die passenden<br>Fördermittel für Ihr Unternehmen zu finden.</p>
+    </div>
+    
+    <div class="card-container">
+        <!-- Chat Portal -->
+        <a href="/chat" class="card">
+            <div class="icon-wrap icon-ai">🤖</div>
+            <h2>Geführte KI-Beratung</h2>
+            <p>Unterhalten Sie sich natürlich mit unserem KI-Agenten. Er stellt Ihnen gezielte Fragen und ermittelt automatisch Ihre Förderfähigkeit.</p>
+            <div class="btn btn-ai">Berater starten ➔</div>
+        </a>
+        
+        <!-- Form Portal -->
+        <a href="/form" class="card form-card">
+            <div class="icon-wrap icon-form">📊</div>
+            <h2>Klassische Suche</h2>
+            <p>Geben Sie Ihre Unternehmensdaten und Projektdetails direkt ein und erhalten Sie strukturierte Top-Ergebnisse. Ideal für Profis.</p>
+            <div class="btn btn-form">Zum Formular ➔</div>
+        </a>
+    </div>
+</body>
+</html>

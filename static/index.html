@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundavia — Intelligenter Förderberater</title>
+    <link rel="stylesheet" href="/static/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="glow-container">
+        <div class="glow-sphere glow-sphere-1"></div>
+        <div class="glow-sphere glow-sphere-2"></div>
+    </div>
+
+    <main class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-accent">Fundavia</span> Funding Advisor
+            </div>
+            <h1>Entdecken Sie passende Fördermittel für Ihr Vorhaben</h1>
+            <p class="subtitle">Präzise SQL-Filterung kombiniert mit semantischer KI-Suche — Zuverlässig & Transparent</p>
+        </header>
+
+        <!-- Main Layout Split -->
+        <div class="content-layout">
+            
+            <!-- Left Side: Wizard Card -->
+            <section class="wizard-section">
+                <div class="glass-card">
+                    <form id="advisor-form" onsubmit="return false;">
+                        
+                        <!-- Form Section 1: Hard Filters (Kill Switches) -->
+                        <div class="form-group-title">
+                            <span class="step-num">1</span>
+                            <h2>Ausschlusskriterien (Hard Filters)</h2>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-control">
+                                <label for="location">Region / Bundesland</label>
+                                <select id="location" required>
+                                    <option value="" disabled selected>Bitte wählen Sie Ihr Bundesland...</option>
+                                    <option value="baden_wuerttemberg">Baden-Württemberg</option>
+                                    <option value="bayern">Bayern</option>
+                                    <option value="berlin">Berlin</option>
+                                    <option value="brandenburg">Brandenburg</option>
+                                    <option value="bremen">Bremen</option>
+                                    <option value="hamburg">Hamburg</option>
+                                    <option value="hessen">Hessen</option>
+                                    <option value="mecklenburg_vorpommern">Mecklenburg-Vorpommern</option>
+                                    <option value="niedersachsen">Niedersachsen</option>
+                                    <option value="nordrhein_westfalen">Nordrhein-Westfalen</option>
+                                    <option value="rheinland_pfalz">Rheinland-Pfalz</option>
+                                    <option value="saarland">Saarland</option>
+                                    <option value="sachsen">Sachsen</option>
+                                    <option value="sachsen_anhalt">Sachsen-Anhalt</option>
+                                    <option value="schleswig_holstein">Schleswig-Holstein</option>
+                                    <option value="thueringen">Thüringen</option>
+                                </select>
+                            </div>
+
+                            <div class="form-control">
+                                <label for="applicant_type">Art des Antragstellers</label>
+                                <select id="applicant_type" required>
+                                    <option value="unternehmen">Unternehmen (Gewerblich)</option>
+                                    <option value="existenzgruenderin">Existenzgründer/in / Startup</option>
+                                    <option value="hochschule">Hochschule / Universität</option>
+                                    <option value="forschungseinrichtung">Forschungseinrichtung</option>
+                                    <option value="kommune">Kommune / Gemeinde</option>
+                                    <option value="verband_vereinigung">Verein / Verband</option>
+                                    <option value="privatperson">Privatperson</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-control">
+                                <label for="company_size">Unternehmensgröße (SME Status)</label>
+                                <select id="company_size" required>
+                                    <option value="kleinstunternehmen">Kleinstunternehmen (&lt; 10 Mitarbeiter)</option>
+                                    <option value="kleines_unternehmen">Kleines Unternehmen (10 - 49 Mitarbeiter)</option>
+                                    <option value="mittleres_unternehmen">Mittleres Unternehmen (50 - 249 Mitarbeiter)</option>
+                                    <option value="grosses_unternehmen">Großunternehmen (&ge; 250 Mitarbeiter)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row binary-switches">
+                            <div class="form-control-switch">
+                                <span class="switch-label">Bereits mit dem Vorhaben begonnen?</span>
+                                <div class="switch-options">
+                                    <label class="switch-option">
+                                        <input type="radio" name="started" value="true">
+                                        <span>Ja</span>
+                                    </label>
+                                    <label class="switch-option">
+                                        <input type="radio" name="started" value="false" checked>
+                                        <span>Nein</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-control-switch">
+                                <span class="switch-label">Eigenanteil finanzierbar (Co-Finanzierung)?</span>
+                                <div class="switch-options">
+                                    <label class="switch-option">
+                                        <input type="radio" name="co_financing" value="true" checked>
+                                        <span>Ja</span>
+                                    </label>
+                                    <label class="switch-option">
+                                        <input type="radio" name="co_financing" value="false">
+                                        <span>Nein</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Section 2: Preferences -->
+                        <div class="form-group-title divider">
+                            <span class="step-num">2</span>
+                            <h2>Präferenzen &amp; Ausrichtung (Soft Filters)</h2>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-control">
+                                <label for="sector">Branche</label>
+                                <select id="sector" required>
+                                    <option value="dienstleistungen">Dienstleistungen</option>
+                                    <option value="produzierendes_gewerbe">Produzierendes Gewerbe / Industrie</option>
+                                    <option value="handwerk">Handwerk</option>
+                                    <option value="handel">Handel</option>
+                                    <option value="gastgewerbe_tourismus">Gastgewerbe &amp; Tourismus</option>
+                                    <option value="freie_berufe">Freie Berufe</option>
+                                    <option value="kultur_kreativwirtschaft">Kultur- &amp; Kreativwirtschaft</option>
+                                    <option value="land_forst_fischwirtschaft">Land-, Forst- &amp; Fischwirtschaft</option>
+                                </select>
+                            </div>
+
+                            <div class="form-control">
+                                <label for="goal">Hauptfokus des Vorhabens</label>
+                                <select id="goal" required>
+                                    <option value="digitalisierung">Digitalisierung</option>
+                                    <option value="existenzgruendung_festigung">Existenzgründung &amp; Festigung</option>
+                                    <option value="forschung_innovation_themenoffen">Forschung &amp; Innovation (Offen)</option>
+                                    <option value="unternehmensfinanzierung">Unternehmensfinanzierung / Investitionen</option>
+                                    <option value="energieeffizienz_erneuerbare_energien">Energieeffizienz &amp; Umwelt</option>
+                                    <option value="beratung">Beratung &amp; Coaching</option>
+                                    <option value="aus_weiterbildung">Aus- &amp; Weiterbildung</option>
+                                    <option value="regionalfoerderung">Regionalförderung</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-control">
+                                <label for="funding_type">Gewünschte Förderart</label>
+                                <select id="funding_type" required>
+                                    <option value="any">Keine Präferenz (Alles anzeigen)</option>
+                                    <option value="zuschuss">Zuschuss (nicht rückzahlbar)</option>
+                                    <option value="darlehen">Zinsgünstiges Darlehen</option>
+                                    <option value="buergschaft">Bürgschaft / Garantie</option>
+                                    <option value="beteiligung">Eigenkapital / Beteiligung</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Form Section 3: Semantic Project Description -->
+                        <div class="form-group-title divider">
+                            <span class="step-num">3</span>
+                            <h2>Projektbeschreibung (Semantische KI-Suche)</h2>
+                        </div>
+
+                        <div class="form-control">
+                            <label for="description">Beschreiben Sie Ihr Projekt kurz in 1-2 Sätzen (Deutsch)</label>
+                            <textarea id="description" rows="3" required placeholder="Beispiel: Wir planen die Anschaffung neuer energieeffizienter Produktionsmaschinen zur Modernisierung unserer Textilfabrik sowie Schulungen für unsere Mitarbeiter im Umgang damit."></textarea>
+                        </div>
+
+                        <button type="submit" id="submit-btn" class="primary-btn">
+                            <span class="btn-text">Fördermittel ermitteln</span>
+                            <span class="loader hidden"></span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Right Side: Results Panel -->
+            <section class="results-section">
+                <div class="results-header">
+                    <h2>Empfohlene Förderprogramme</h2>
+                    <span id="results-count" class="badge">0 Programme gefunden</span>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state">
+                    <div class="empty-icon">🔍</div>
+                    <h3>Bereit zur Analyse</h3>
+                    <p>Füllen Sie das Formular aus und klicken Sie auf "Fördermittel ermitteln", um die semantische und logische Match-Analyse zu starten.</p>
+                </div>
+
+                <!-- Results List -->
+                <div id="results-list" class="results-list hidden">
+                    <!-- Cards injected dynamically via JS -->
+                </div>
+            </section>
+            
+        </div>
+    </main>
+
+    <!-- Modal for Detailed Body Text -->
+    <div id="detail-modal" class="modal hidden">
+        <div class="modal-content glass-card">
+            <span class="close-modal">&times;</span>
+            <div id="modal-body-content"></div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
