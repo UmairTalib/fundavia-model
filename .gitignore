@@ -1,2 +1,4 @@
 *.db
 *.sqlite3
+CLAUDE_CODE_HANDOVER.md
+.env
